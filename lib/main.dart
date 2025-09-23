@@ -1,4 +1,3 @@
-// main.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -37,6 +36,30 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  // Sample products list (can later be managed dynamically)
+  static final List<Map<String, dynamic>> myProductsList = [
+    {
+      "name": "Samba",
+      "quantity": "120",
+      "price": "120",
+      "area": "2 acres",
+      "harvestDate": "15-Aug-2025",
+      "status": "Growing",
+      "image": "assets/samba.png",
+      "isAsset": true,
+    },
+    {
+      "name": "Naadu (Red)",
+      "quantity": "80",
+      "price": "100",
+      "area": "3 acres",
+      "harvestDate": "05-Jul-2025",
+      "status": "Sold Out",
+      "image": "assets/red_naadu.png",
+      "isAsset": true,
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -50,13 +73,11 @@ class MyApp extends StatelessWidget {
           centerTitle: true,
         ),
       ),
-      // check login state
       home: FirebaseAuth.instance.currentUser == null
           ? const WelcomeScreen()
           : const DashboardScreen(),
 
       initialRoute: '/fdashboard',
-
       routes: {
         '/language': (context) => const LanguageScreen(),
         '/register': (context) => const RegistrationScreen(),
@@ -72,7 +93,11 @@ class MyApp extends StatelessWidget {
         '/stores': (context) => const StoresScreen(),
         '/labors': (context) => const LaborsScreen(),
         '/drivers': (context) => const DriversScreen(),
-        '/cultivation': (context) => const CultivationScreen(),
+
+        // Pass products list to cultivation
+        '/cultivation': (context) =>
+            CultivationScreen(products: myProductsList),
+
         '/weather': (context) => const WeatherScreen(),
         '/products': (context) => const ProductsScreen(),
         '/myProducts': (context) => const MyProductsScreen(),
