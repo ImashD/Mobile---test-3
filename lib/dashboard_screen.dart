@@ -1,8 +1,18 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:image_picker/image_picker.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  final ImagePicker _picker = ImagePicker();
+  File? _profileImage; // Stores the user's profile photo
 
   @override
   Widget build(BuildContext context) {
@@ -61,10 +71,20 @@ class DashboardScreen extends StatelessWidget {
                           onTap: () {
                             _showProfileDialog(context);
                           },
-                          child: const CircleAvatar(
+                          child: CircleAvatar(
                             radius: 18,
-                            backgroundColor: Color.fromARGB(255, 118, 226, 198),
-                            child: Icon(Icons.person, color: Colors.black),
+                            backgroundColor: const Color.fromARGB(
+                              255,
+                              118,
+                              226,
+                              198,
+                            ),
+                            backgroundImage: _profileImage != null
+                                ? FileImage(_profileImage!)
+                                : null,
+                            child: _profileImage == null
+                                ? const Icon(Icons.person, color: Colors.black)
+                                : null,
                           ),
                         ),
                       ],
@@ -264,9 +284,7 @@ class DashboardScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              onTap: () {
-                Navigator.pushReplacementNamed(context, "/register");
-              },
+              onTap: () => Navigator.pushReplacementNamed(context, "/register"),
             ),
           ),
         ],
@@ -338,80 +356,138 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  // Profile Dialog
+  // Profile Dialog with plus sign
   void _showProfileDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (ctx) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const CircleAvatar(
-                  radius: 45,
-                  backgroundColor: Color(0xFF76E2C6),
-                  child: Icon(Icons.person, size: 50, color: Colors.black),
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  "John Doe",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  "Role: Farmer",
-                  style: TextStyle(fontSize: 16, color: Colors.black87),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  "Paddy Type: Red Samba",
-                  style: TextStyle(fontSize: 16, color: Colors.black87),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  "Contact: +94 77 123 4567",
-                  style: TextStyle(fontSize: 16, color: Colors.black87),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF009688),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+        return StatefulBuilder(
+          builder: (ctx, setState) {
+            Future<void> _pickProfileImage() async {
+              final pickedFile = await _picker.pickImage(
+                source: ImageSource.gallery,
+              );
+              if (pickedFile != null) {
+                setState(() {
+                  _profileImage = File(pickedFile.path);
+                });
+                this.setState(() {}); // Update dashboard avatar immediately
+              }
+            }
+
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Stack(
+                      children: [
+                        CircleAvatar(
+                          radius: 45,
+                          backgroundColor: const Color(0xFF76E2C6),
+                          backgroundImage: _profileImage != null
+                              ? FileImage(_profileImage!)
+                              : null,
+                          child: _profileImage == null
+                              ? const Icon(
+                                  Icons.person,
+                                  size: 50,
+                                  color: Colors.black,
+                                )
+                              : null,
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: GestureDetector(
+                            onTap: _pickProfileImage,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.teal,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 2,
+                                ),
+                              ),
+                              padding: const EdgeInsets.all(4),
+                              child: const Icon(
+                                Icons.add,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  icon: const Icon(Icons.switch_account, color: Colors.white),
-                  label: const Text(
-                    "Switch Role",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(ctx);
-                    Navigator.pushNamed(context, "/roleSelection");
-                  },
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF76E2C6),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                    const SizedBox(height: 12),
+                    const Text(
+                      "John Doe",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  child: const Text(
-                    "OK",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  onPressed: () => Navigator.pop(ctx),
+                    const SizedBox(height: 4),
+                    const Text(
+                      "Role: Farmer",
+                      style: TextStyle(fontSize: 16, color: Colors.black87),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      "Paddy Type: Red Samba",
+                      style: TextStyle(fontSize: 16, color: Colors.black87),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      "Contact: +94 77 123 4567",
+                      style: TextStyle(fontSize: 16, color: Colors.black87),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF009688),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      icon: const Icon(
+                        Icons.switch_account,
+                        color: Colors.white,
+                      ),
+                      label: const Text(
+                        "Switch Role",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(ctx);
+                        Navigator.pushNamed(context, "/roleSelection");
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF76E2C6),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        "OK",
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      onPressed: () => Navigator.pop(ctx),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );
