@@ -1,6 +1,7 @@
 // stores.dart
 
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class StoresScreen extends StatefulWidget {
   const StoresScreen({super.key});
@@ -10,8 +11,7 @@ class StoresScreen extends StatefulWidget {
 }
 
 class _StoresScreenState extends State<StoresScreen> {
-  final TextEditingController _searchController = TextEditingController();
-  String searchQuery = "";
+  GoogleMapController? _mapController;
 
   // Mock store data
   final List<Map<String, dynamic>> stores = [
@@ -21,6 +21,8 @@ class _StoresScreenState extends State<StoresScreen> {
       "address": "No. 12, Main Road, Kurunegala",
       "capacity": "500 MT",
       "status": "Active",
+      "lat": 7.4863,
+      "lng": 80.3623,
     },
     {
       "name": "Anuradhapura Paddy Store",
@@ -28,6 +30,8 @@ class _StoresScreenState extends State<StoresScreen> {
       "address": "New Town, Anuradhapura",
       "capacity": "300 MT",
       "status": "Under Maintenance",
+      "lat": 8.3114,
+      "lng": 80.4037,
     },
     {
       "name": "Polonnaruwa Main Store",
@@ -35,19 +39,45 @@ class _StoresScreenState extends State<StoresScreen> {
       "address": "Market Road, Polonnaruwa",
       "capacity": "450 MT",
       "status": "Active",
+      "lat": 7.9403,
+      "lng": 81.0188,
     },
   ];
 
+  final Set<Marker> _markers = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMarkers();
+  }
+
+  void _loadMarkers() {
+    for (var store in stores) {
+      _markers.add(
+        Marker(
+          markerId: MarkerId(store["name"]),
+          position: LatLng(store["lat"], store["lng"]),
+          infoWindow: InfoWindow(
+            title: store["name"],
+            snippet: store["address"],
+            onTap: () => _showStoreDetails(context, store),
+          ),
+        ),
+      );
+    }
+    setState(() {});
+  }
+
+  void _moveToStore(Map<String, dynamic> store) {
+    _mapController?.animateCamera(
+      CameraUpdate.newLatLngZoom(LatLng(store["lat"], store["lng"]), 14),
+    );
+    _showStoreDetails(context, store);
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Filter stores by search query
-    final filteredStores = stores
-        .where(
-          (store) =>
-              store["name"].toLowerCase().contains(searchQuery.toLowerCase()),
-        )
-        .toList();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -57,64 +87,123 @@ class _StoresScreenState extends State<StoresScreen> {
         backgroundColor: const Color(0xFF009688),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          // 🔍 Search bar with clear button
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.search),
-                hintText: "Search store by name...",
-                suffixIcon: searchQuery.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() => searchQuery = "");
-                        },
-                      )
-                    : null,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              onChanged: (value) {
-                setState(() => searchQuery = value);
+          // Google Map
+          GoogleMap(
+            onMapCreated: (controller) => _mapController = controller,
+            initialCameraPosition: const CameraPosition(
+              target: LatLng(7.8731, 80.7718), // Center of Sri Lanka
+              zoom: 7,
+            ),
+            markers: _markers,
+            myLocationEnabled: true,
+            zoomControlsEnabled: true,
+          ),
+
+          // Autocomplete search bar (top)
+          Positioned(
+            top: 12,
+            left: 12,
+            right: 12,
+            child: Autocomplete<Map<String, dynamic>>(
+              optionsBuilder: (TextEditingValue textEditingValue) {
+                if (textEditingValue.text.isEmpty) {
+                  return const Iterable.empty();
+                }
+                return stores.where(
+                  (store) => store["name"].toLowerCase().contains(
+                    textEditingValue.text.toLowerCase(),
+                  ),
+                );
+              },
+              displayStringForOption: (store) => store["name"],
+              fieldViewBuilder:
+                  (context, controller, focusNode, onFieldSubmitted) {
+                    return TextField(
+                      controller: controller,
+                      focusNode: focusNode,
+                      decoration: InputDecoration(
+                        hintText: "Search store by name...",
+                        filled: true,
+                        fillColor: Colors.white,
+                        prefixIcon: const Icon(Icons.search),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    );
+                  },
+              onSelected: (store) {
+                _moveToStore(store);
               },
             ),
           ),
 
-          // 🗺 Mock Map with pins
-          Expanded(
-            child: Stack(
-              children: [
-                Center(
-                  child: Image.asset(
-                    "assets/map_mock.png", // placeholder SL map image
-                    fit: BoxFit.cover,
-                    width: double.infinity,
+          // "View Stores" button (bottom center)
+          Positioned(
+            bottom: 20,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
                   ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  elevation: 4,
                 ),
-                // 📍 Mock pins overlay
-                ...filteredStores.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final store = entry.value;
-                  return Positioned(
-                    left: 100.0 + (index * 50), // mock X pos
-                    top: 150.0 + (index * 60), // mock Y pos
-                    child: GestureDetector(
-                      onTap: () => _showStoreDetails(context, store),
-                      child: const Icon(
-                        Icons.location_on,
-                        color: Colors.red,
-                        size: 40,
+                icon: const Icon(Icons.list),
+                label: const Text(
+                  "View Stores",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(20),
                       ),
                     ),
+                    builder: (_) {
+                      return ListView(
+                        padding: const EdgeInsets.all(16),
+                        children: stores.map((store) {
+                          return Card(
+                            margin: const EdgeInsets.symmetric(vertical: 8),
+                            child: ListTile(
+                              leading: const Icon(
+                                Icons.store,
+                                color: Colors.teal,
+                              ),
+                              title: Text(store["name"]),
+                              subtitle: Text(store["address"]),
+                              trailing: Icon(
+                                Icons.circle,
+                                color: store["status"] == "Active"
+                                    ? Colors.green
+                                    : Colors.red,
+                                size: 14,
+                              ),
+                              onTap: () {
+                                Navigator.pop(context);
+                                _moveToStore(store);
+                              },
+                            ),
+                          );
+                        }).toList(),
+                      );
+                    },
                   );
-                }),
-              ],
+                },
+              ),
             ),
           ),
         ],
