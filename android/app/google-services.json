@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "639932995170",
+    "project_id": "weesaviya-mobile",
+    "storage_bucket": "weesaviya-mobile.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:639932995170:android:a00da51a90ba4c7be3233b",
+        "android_client_info": {
+          "package_name": "com.example.test3"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCG5ZUe29DuqyvvRVSNdMkatPF67TO4hDg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
