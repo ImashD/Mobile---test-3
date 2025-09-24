@@ -1,21 +1,531 @@
+// labour_dashboard.dart
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'my_jobs_screen.dart';
 
-class LabourDashboard extends StatelessWidget {
+class LabourDashboard extends StatefulWidget {
   const LabourDashboard({super.key});
+
+  @override
+  State<LabourDashboard> createState() => _LabourDashboardState();
+}
+
+class _LabourDashboardState extends State<LabourDashboard> {
+  final ImagePicker _picker = ImagePicker();
+  File? _profileImage;
+  bool _isAvailable = true;
+
+  // Sample job requests
+  final List<Map<String, String>> _jobRequests = [
+    {
+      "farmer": "Sunil Perera",
+      "jobType": "Harvesting",
+      "location": "Kurunegala",
+      "duration": "4 hrs",
+      "date": "2025-09-12",
+      "time": "08:30 AM",
+    },
+    {
+      "farmer": "Anjali Silva",
+      "jobType": "Planting",
+      "location": "Gampaha",
+      "duration": "6 hrs",
+      "date": "2025-09-13",
+      "time": "02:00 PM",
+    },
+  ];
+
+  // Store accepted jobs
+  final List<Map<String, String>> _acceptedJobs = [];
+
+  // Accept a job
+  void _acceptJob(int index) {
+    setState(() {
+      _acceptedJobs.add(_jobRequests[index]);
+      _jobRequests.removeAt(index);
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Accepted job from ${_acceptedJobs.last["farmer"]}"),
+      ),
+    );
+  }
+
+  // Reject a job
+  void _rejectJob(int index) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Rejected job from ${_jobRequests[index]["farmer"]}"),
+      ),
+    );
+    setState(() {
+      _jobRequests.removeAt(index);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Wee Saviya Dashboard"),
-        backgroundColor: const Color(0xFF2196F3), // blue theme
-      ),
-      body: const Center(
-        child: Text(
-          "Welcome to Wee Saviya Dashboard 🎉",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      backgroundColor: const Color(0xFFE0F7FA),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Top bar
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(30),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 3,
+                          offset: Offset(1, 2),
+                        ),
+                      ],
+                    ),
+                    child: Image.asset("assets/logo.png", height: 35),
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.notifications, size: 26),
+                          onPressed: () {},
+                        ),
+                        const SizedBox(width: 5),
+                        GestureDetector(
+                          onTap: () => _showProfileDialog(context),
+                          child: CircleAvatar(
+                            radius: 18,
+                            backgroundColor: const Color(0xFF00BCD4),
+                            backgroundImage: _profileImage != null
+                                ? FileImage(_profileImage!)
+                                : null,
+                            child: _profileImage == null
+                                ? const Icon(Icons.person, color: Colors.black)
+                                : null,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Tagline
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black54),
+                borderRadius: BorderRadius.circular(12),
+                color: const Color(0xFF00BCD4),
+              ),
+              child: const Text(
+                "තිරසාර ගොවිතැනට නව සවියක්\n"
+                "Smart farming Starts here\n"
+                "ஸ்மார்ட் விவசாயம் இங்கே தொடங்குகிறது",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+
+            // Availability switch
+            SwitchListTile(
+              title: const Text(
+                "Available for Work",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              value: _isAvailable,
+              onChanged: (val) => setState(() => _isAvailable = val),
+              activeColor: Colors.black,
+              activeTrackColor: const Color(0xFF00ACC1),
+            ),
+
+            const SizedBox(height: 8),
+
+            // Job Requests
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                child: _jobRequests.isEmpty
+                    ? const Center(
+                        child: Text(
+                          "No job requests available",
+                          style: TextStyle(fontSize: 16, color: Colors.black54),
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: _jobRequests.length,
+                        itemBuilder: (context, index) {
+                          final job = _jobRequests[index];
+                          return Card(
+                            margin: const EdgeInsets.only(bottom: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            elevation: 5,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Header with farmer name
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 10,
+                                    horizontal: 14,
+                                  ),
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFF80DEEA),
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(16),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    "🚜 Farmer: ${job["farmer"]}",
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+
+                                // Job content
+                                Container(
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [Color(0xFFE0F7FA), Colors.white],
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                    ),
+                                    borderRadius: const BorderRadius.vertical(
+                                      bottom: Radius.circular(16),
+                                    ),
+                                  ),
+                                  padding: const EdgeInsets.all(12),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.work,
+                                            size: 18,
+                                            color: Colors.black54,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            "Job: ${job["jobType"]}",
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.location_on,
+                                            size: 18,
+                                            color: Colors.green,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              "Location: ${job["location"]}",
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.timer,
+                                            size: 18,
+                                            color: Colors.blueGrey,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            "Duration: ${job["duration"]}",
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.calendar_today,
+                                            size: 16,
+                                            color: Colors.blueGrey,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            "Date: ${job["date"]}",
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 16),
+                                          const Icon(
+                                            Icons.access_time,
+                                            size: 16,
+                                            color: Colors.blueGrey,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            "Time: ${job["time"]}",
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          ElevatedButton.icon(
+                                            onPressed: () => _rejectJob(index),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.redAccent,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                            icon: const Icon(
+                                              Icons.close,
+                                              size: 18,
+                                              color: Colors.white,
+                                            ),
+                                            label: const Text(
+                                              "Reject",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          ElevatedButton.icon(
+                                            onPressed: () => _acceptJob(index),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.green,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                            icon: const Icon(
+                                              Icons.check,
+                                              size: 18,
+                                              color: Colors.white,
+                                            ),
+                                            label: const Text(
+                                              "Accept",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+              ),
+            ),
+
+            // Bottom Nav
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _bottomNavButton(Icons.home, "Home", () {}),
+                  const SizedBox(width: 25),
+                  _bottomNavButton(Icons.list, "My Jobs", () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            MyJobsScreen(acceptedJobs: _acceptedJobs),
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
+    );
+  }
+
+  // Profile Dialog
+  void _showProfileDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setState) {
+            Future<void> _pickProfileImage() async {
+              final pickedFile = await _picker.pickImage(
+                source: ImageSource.gallery,
+              );
+              if (pickedFile != null)
+                setState(() => _profileImage = File(pickedFile.path));
+            }
+
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Stack(
+                      children: [
+                        CircleAvatar(
+                          radius: 45,
+                          backgroundColor: Color(0xFF80DEEA),
+                          backgroundImage: _profileImage != null
+                              ? FileImage(_profileImage!)
+                              : null,
+                          child: _profileImage == null
+                              ? const Icon(
+                                  Icons.person,
+                                  size: 50,
+                                  color: Colors.black,
+                                )
+                              : null,
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: GestureDetector(
+                            onTap: _pickProfileImage,
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF00BCD4),
+                                shape: BoxShape.circle,
+                              ),
+                              padding: const EdgeInsets.all(4),
+                              child: const Icon(
+                                Icons.add,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      "Labour Name",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      "Speciality: General Farm Work",
+                      style: TextStyle(fontSize: 16, color: Colors.black87),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      "Contact: +94 77 123 4567",
+                      style: TextStyle(fontSize: 16, color: Colors.black87),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF00ACC1),
+                      ),
+                      child: const Text(
+                        "Switch Role",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(ctx);
+                        Navigator.pushNamed(context, "/roleSelection");
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF80DEEA),
+                      ),
+                      child: const Text(
+                        "OK",
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      onPressed: () => Navigator.pop(ctx),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // Bottom Nav Button
+  Widget _bottomNavButton(IconData icon, String label, VoidCallback onTap) {
+    return Column(
+      children: [
+        CircleAvatar(
+          backgroundColor: const Color(0xFF00BCD4),
+          radius: 24,
+          child: IconButton(
+            icon: Icon(icon, color: Colors.black),
+            onPressed: onTap,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(label, style: const TextStyle(fontSize: 12)),
+      ],
     );
   }
 }

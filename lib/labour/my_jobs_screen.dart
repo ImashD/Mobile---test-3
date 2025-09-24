@@ -1,22 +1,23 @@
+// my_jobs_screen.dart
 import 'package:flutter/material.dart';
 
-class MyTripsScreen extends StatelessWidget {
-  final List<Map<String, String>> acceptedTrips;
+class MyJobsScreen extends StatelessWidget {
+  final List<Map<String, String>> acceptedJobs;
 
-  const MyTripsScreen({super.key, required this.acceptedTrips});
+  const MyJobsScreen({super.key, required this.acceptedJobs});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("My Trips", style: TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xFFFFB74D),
+        title: const Text("My Jobs", style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color(0xFF00BCD4),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: acceptedTrips.isEmpty
+      body: acceptedJobs.isEmpty
           ? const Center(
               child: Text(
-                "No accepted trips yet",
+                "No accepted jobs yet",
                 style: TextStyle(fontSize: 16, color: Colors.black54),
               ),
             )
@@ -27,7 +28,7 @@ class MyTripsScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   gradient: const LinearGradient(
-                    colors: [Color(0xFFFFF3E0), Color(0xFFFFE0B2)],
+                    colors: [Color(0xFFE0F7FA), Color(0xFFB2EBF2)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -46,22 +47,39 @@ class MyTripsScreen extends StatelessWidget {
                   children: [
                     const Center(
                       child: Icon(
-                        Icons.local_shipping,
+                        Icons.work,
                         size: 80,
-                        color: Color(0xFFFF9800),
+                        color: Color(0xFF00ACC1),
                       ),
                     ),
                     const SizedBox(height: 24),
 
-                    // Trip Details
+                    // Job Details
                     Text(
-                      "🚜 Farmer: ${acceptedTrips[0]["farmer"]}",
+                      "🚜 Farmer: ${acceptedJobs[0]["farmer"]}",
                       style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.work_outline,
+                          size: 20,
+                          color: Colors.black54,
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            "Job: ${acceptedJobs[0]["jobType"]}",
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
                     Row(
                       children: [
                         const Icon(
@@ -72,7 +90,7 @@ class MyTripsScreen extends StatelessWidget {
                         const SizedBox(width: 16),
                         Expanded(
                           child: Text(
-                            "Pickup: ${acceptedTrips[0]["pickup"]}",
+                            "Location: ${acceptedJobs[0]["location"]}",
                             style: const TextStyle(fontSize: 18),
                           ),
                         ),
@@ -82,20 +100,22 @@ class MyTripsScreen extends StatelessWidget {
                     Row(
                       children: [
                         const Icon(
-                          Icons.flag,
+                          Icons.timer,
                           size: 20,
-                          color: Colors.redAccent,
+                          color: Colors.blueGrey,
                         ),
                         const SizedBox(width: 16),
                         Expanded(
                           child: Text(
-                            "Dropoff: ${acceptedTrips[0]["dropoff"]}",
+                            "Duration: ${acceptedJobs[0]["duration"]}",
                             style: const TextStyle(fontSize: 18),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 16),
+
+                    // Date & Time as two-line labels
                     Row(
                       children: [
                         const Icon(
@@ -105,16 +125,24 @@ class MyTripsScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 16),
                         Expanded(
-                          child: Text(
-                            "Date: ${acceptedTrips[0]["date"]}",
-                            style: const TextStyle(fontSize: 18),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Date:",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              Text(
+                                acceptedJobs[0]["date"]!,
+                                style: const TextStyle(fontSize: 18),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
+                        const SizedBox(width: 16),
                         const Icon(
                           Icons.access_time,
                           size: 18,
@@ -122,9 +150,21 @@ class MyTripsScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 16),
                         Expanded(
-                          child: Text(
-                            "Time: ${acceptedTrips[0]["time"]}",
-                            style: const TextStyle(fontSize: 18),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Time:",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              Text(
+                                acceptedJobs[0]["time"]!,
+                                style: const TextStyle(fontSize: 18),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -146,11 +186,11 @@ class MyTripsScreen extends StatelessWidget {
                           color: Colors.white,
                         ),
                         label: const Text(
-                          "Track Location",
+                          "Track Job Location",
                           style: TextStyle(color: Colors.white),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFF9800),
+                          backgroundColor: const Color(0xFF00ACC1),
                           padding: const EdgeInsets.symmetric(
                             vertical: 16,
                             horizontal: 24,
