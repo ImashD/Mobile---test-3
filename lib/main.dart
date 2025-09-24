@@ -11,22 +11,23 @@ import 'role_selection_screen.dart';
 import 'farmer_form1.dart';
 import 'farmer_form2.dart' show FarmerFormScreen;
 import 'payment_form.dart';
-import 'labour_form1.dart';
+import 'labour_form.dart';
 import 'driver_form.dart';
 import 'farmer_dashboard.dart';
-import 'feature/market.dart';
-import 'feature/stores.dart';
-import 'feature/labors.dart';
-import 'feature/drivers.dart';
-import 'feature/cultivation.dart';
-import 'feature/weather.dart';
-import 'drawer/my_products.dart';
-import 'drawer/reports.dart';
-import 'drawer/promotions.dart';
-import 'drawer/contact.dart';
-import 'drawer/products.dart';
-import 'drawer/learn.dart';
+import 'ffeature/market.dart';
+import 'ffeature/stores.dart';
+import 'ffeature/labors.dart';
+import 'ffeature/drivers.dart';
+import 'ffeature/cultivation.dart';
+import 'ffeature/weather.dart';
+import 'fdrawer/my_products.dart';
+import 'fdrawer/reports.dart';
+import 'fdrawer/promotions.dart';
+import 'fdrawer/contact.dart';
+import 'fdrawer/products.dart';
+import 'fdrawer/learn.dart';
 import 'driver_dashboard.dart';
+import 'labour_dashboard.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -78,7 +79,7 @@ class MyApp extends StatelessWidget {
           ? const WelcomeScreen()
           : const DashboardScreen(),
 
-      initialRoute: '/fdashboard',
+      initialRoute: '/ddashboard',
       routes: {
         '/language': (context) => const LanguageScreen(),
         '/register': (context) => const RegistrationScreen(),
@@ -95,6 +96,7 @@ class MyApp extends StatelessWidget {
         '/labors': (context) => const LaborsScreen(),
         '/drivers': (context) => const DriversScreen(),
         '/ddashboard': (context) => const DriverDashboard(),
+        '/ldashboard': (context) => const LabourDashboard(),
 
         // Pass products list to cultivation
         '/cultivation': (context) =>
