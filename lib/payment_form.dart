@@ -284,7 +284,7 @@ class _PaymentFormScreenState extends State<FarmerPaymentFormScreen> {
                               ),
                             ),
                             child: const Text(
-                              "Save & REGISTER",
+                              "Save & REGISTER)",
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,

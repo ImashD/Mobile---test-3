@@ -101,7 +101,7 @@ class RoleSelectionScreen extends StatelessWidget {
                         ),
                       ),
                       const TextSpan(
-                        text: "(You can change this later)",
+                        text: "(You can switch the ROLE later)",
                         style: TextStyle(
                           fontSize: 14,
                           color: Color.fromARGB(255, 60, 59, 59),
@@ -138,8 +138,8 @@ class RoleSelectionScreen extends StatelessWidget {
                   context: context,
                   icon: Icons.local_shipping,
                   backgroundColor: const Color.fromARGB(255, 248, 252, 225),
-                  title: "Transport",
-                  subtitle: "Offer or find transport services.",
+                  title: "Driver",
+                  subtitle: "Offer transport services.",
                   color: Colors.orange,
                   onTap: () => Navigator.pushNamed(context, '/driverForm'),
                 ),

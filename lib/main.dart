@@ -11,9 +11,9 @@ import 'role_selection_screen.dart';
 import 'farmer_form1.dart';
 import 'farmer_form2.dart' show FarmerFormScreen;
 import 'payment_form.dart';
-import 'labour_form.dart';
+import 'labour_form1.dart';
 import 'driver_form.dart';
-import 'dashboard_screen.dart';
+import 'farmer_dashboard.dart';
 import 'feature/market.dart';
 import 'feature/stores.dart';
 import 'feature/labors.dart';
@@ -26,6 +26,7 @@ import 'drawer/promotions.dart';
 import 'drawer/contact.dart';
 import 'drawer/products.dart';
 import 'drawer/learn.dart';
+import 'driver_dashboard.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -93,6 +94,7 @@ class MyApp extends StatelessWidget {
         '/stores': (context) => const StoresScreen(),
         '/labors': (context) => const LaborsScreen(),
         '/drivers': (context) => const DriversScreen(),
+        '/ddashboard': (context) => const DriverDashboard(),
 
         // Pass products list to cultivation
         '/cultivation': (context) =>

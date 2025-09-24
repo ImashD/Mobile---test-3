@@ -172,7 +172,7 @@ class _FarmerFormScreen2State extends State<FarmerFormScreen> {
                         ),
                         const SizedBox(height: 8),
                         const Text(
-                          "Enter your details",
+                          "Farmer Registration",
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
