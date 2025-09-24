@@ -2,6 +2,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'my_trips_screen.dart';
 
 class DriverDashboard extends StatefulWidget {
   const DriverDashboard({super.key});
@@ -15,7 +16,7 @@ class _DriverDashboardState extends State<DriverDashboard> {
   File? _profileImage;
   bool _isAvailable = true;
 
-  // Sample trip requests (in real app → fetch from backend)
+  // Sample trip requests
   final List<Map<String, String>> _tripRequests = [
     {
       "farmer": "Sunil Perera",
@@ -35,19 +36,26 @@ class _DriverDashboardState extends State<DriverDashboard> {
     },
   ];
 
+  // Store accepted trips
+  final List<Map<String, String>> _acceptedTrips = [];
+
+  // Accept a trip
   void _acceptRequest(int index) {
+    setState(() {
+      _acceptedTrips.add(_tripRequests[index]);
+      _tripRequests.removeAt(index);
+    });
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          "Accepted trip request from ${_tripRequests[index]["farmer"]}",
+          "Accepted trip request from ${_acceptedTrips.last["farmer"]}",
         ),
       ),
     );
-    setState(() {
-      _tripRequests.removeAt(index);
-    });
   }
 
+  // Reject a trip
   void _rejectRequest(int index) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -64,7 +72,7 @@ class _DriverDashboardState extends State<DriverDashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF3E0), // Orange theme
+      backgroundColor: const Color(0xFFFFF3E0),
       body: SafeArea(
         child: Column(
           children: [
@@ -74,7 +82,7 @@ class _DriverDashboardState extends State<DriverDashboard> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  // Center: Logo
+                  // Center logo
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
@@ -90,7 +98,7 @@ class _DriverDashboardState extends State<DriverDashboard> {
                     ),
                     child: Image.asset("assets/logo.png", height: 35),
                   ),
-                  // Right: Notifications + Profile
+                  // Notifications + Profile
                   Align(
                     alignment: Alignment.centerRight,
                     child: Row(
@@ -377,7 +385,15 @@ class _DriverDashboardState extends State<DriverDashboard> {
                 children: [
                   _bottomNavButton(Icons.home, "Home", () {}),
                   const SizedBox(width: 25),
-                  _bottomNavButton(Icons.list, "My Trip", () {}),
+                  _bottomNavButton(Icons.list, "My Trips", () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            MyTripsScreen(acceptedTrips: _acceptedTrips),
+                      ),
+                    );
+                  }),
                 ],
               ),
             ),
@@ -402,7 +418,6 @@ class _DriverDashboardState extends State<DriverDashboard> {
                 setState(() {
                   _profileImage = File(pickedFile.path);
                 });
-                this.setState(() {});
               }
             }
 
