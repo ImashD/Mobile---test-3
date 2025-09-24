@@ -105,16 +105,24 @@ class MyTripsScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 16),
                         Expanded(
-                          child: Text(
-                            "Date: ${acceptedTrips[0]["date"]}",
-                            style: const TextStyle(fontSize: 18),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Date:",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              Text(
+                                acceptedTrips[0]["date"]!,
+                                style: const TextStyle(fontSize: 18),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
+                        const SizedBox(width: 16),
                         const Icon(
                           Icons.access_time,
                           size: 18,
@@ -122,9 +130,21 @@ class MyTripsScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 16),
                         Expanded(
-                          child: Text(
-                            "Time: ${acceptedTrips[0]["time"]}",
-                            style: const TextStyle(fontSize: 18),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Time:",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              Text(
+                                acceptedTrips[0]["time"]!,
+                                style: const TextStyle(fontSize: 18),
+                              ),
+                            ],
                           ),
                         ),
                       ],
