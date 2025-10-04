@@ -24,11 +24,24 @@ class _LanguageScreenState extends State<LanguageScreen> {
                 Positioned(
                   top: 16,
                   left: 16,
-                  child: CircleAvatar(
-                    backgroundColor: const Color(0xFFE1FCF9),
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.black),
-                      onPressed: () => Navigator.pop(context),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE1FCF9),
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 6,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: CircleAvatar(
+                      backgroundColor: const Color(0xFFE1FCF9),
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.black),
+                        onPressed: () => Navigator.pop(context),
+                      ),
                     ),
                   ),
                 ),
@@ -59,14 +72,24 @@ class _LanguageScreenState extends State<LanguageScreen> {
 
             const SizedBox(height: 20),
 
-            // Card
+            // Card with background image
             Expanded(
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFE0F7F4),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE0F7F4),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(40),
+                  ),
+                  image: DecorationImage(
+                    image: AssetImage('assets/languagebg.png'),
+                    fit: BoxFit.cover,
+                    colorFilter: ColorFilter.mode(
+                      Colors.white.withOpacity(0.2), // subtle overlay
+                      BlendMode.dstATop,
+                    ),
+                  ),
                 ),
                 child: Column(
                   children: [
@@ -125,9 +148,9 @@ class _LanguageScreenState extends State<LanguageScreen> {
                             Navigator.pushNamed(context, '/register'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF1DD1A1),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          padding: const EdgeInsets.symmetric(vertical: 11),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(25),
                           ),
                         ),
                         child: const Text(
@@ -138,7 +161,6 @@ class _LanguageScreenState extends State<LanguageScreen> {
                     ),
 
                     const Spacer(),
-                    Image.asset('assets/agriculture.png', height: 150),
                   ],
                 ),
               ),

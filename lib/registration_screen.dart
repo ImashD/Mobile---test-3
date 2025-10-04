@@ -26,7 +26,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     Future.delayed(const Duration(seconds: 1), () {
       setState(() => isSending = false);
-      // Directly navigate to OTP screen (mock flow)
       Navigator.pushNamed(context, '/otp');
     });
   }
@@ -43,17 +42,35 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               Stack(
                 children: [
                   Container(height: 120, color: Colors.transparent),
+                  // Back button with shadow
                   Positioned(
                     top: 16,
                     left: 16,
-                    child: CircleAvatar(
-                      backgroundColor: const Color(0xFF1DD1A1),
-                      child: IconButton(
-                        icon: const Icon(Icons.arrow_back, color: Colors.white),
-                        onPressed: () => Navigator.pop(context),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1DD1A1),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 6,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: CircleAvatar(
+                        backgroundColor: Colors.transparent,
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                          ),
+                          onPressed: () => Navigator.pop(context),
+                        ),
                       ),
                     ),
                   ),
+                  // Logo
                   Positioned(
                     top: 46,
                     left: 0,
@@ -122,22 +139,34 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
               const SizedBox(height: 20),
 
-              // Get OTP button
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1AB394),
-                  minimumSize: const Size(300, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
-                  ),
+              // Get OTP button with shadow
+              Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 6,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                  borderRadius: BorderRadius.circular(25),
                 ),
-                onPressed: isSending ? null : _goToOtpScreen,
-                child: isSending
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text(
-                        "Generate OTP",
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1DD1A1),
+                    minimumSize: const Size(300, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                  ),
+                  onPressed: isSending ? null : _goToOtpScreen,
+                  child: isSending
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                          "Get OTP",
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                        ),
+                ),
               ),
 
               const SizedBox(height: 15),

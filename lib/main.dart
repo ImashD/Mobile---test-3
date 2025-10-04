@@ -3,7 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'firebase_options.dart';
 import 'splash_screen.dart';
-import 'welcome_screen.dart';
 import 'language_screen.dart';
 import 'registration_screen.dart';
 import 'otp_screen.dart';
@@ -28,6 +27,7 @@ import 'farmer/drawer/products.dart';
 import 'farmer/drawer/learn.dart';
 import 'driver/driver_dashboard.dart';
 import 'labour/labour_dashboard.dart';
+import 'onboarding_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -80,7 +80,7 @@ class MyApp extends StatelessWidget {
       home: const SplashScreen(),
 
       routes: {
-        '/welcome': (context) => const WelcomeScreen(),
+        '/welcome': (context) => const OnboardingScreen(),
         '/language': (context) => const LanguageScreen(),
         '/register': (context) => const RegistrationScreen(),
         '/otp': (context) => const OtpScreen(),
