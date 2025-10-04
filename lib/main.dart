@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import 'firebase_options.dart';
+import 'splash_screen.dart';
 import 'welcome_screen.dart';
 import 'language_screen.dart';
 import 'registration_screen.dart';
@@ -75,33 +75,30 @@ class MyApp extends StatelessWidget {
           centerTitle: true,
         ),
       ),
-      home: FirebaseAuth.instance.currentUser == null
-          ? const WelcomeScreen()
-          : const DashboardScreen(),
 
-      initialRoute: '/ddashboard',
+      // Always start with splash screen
+      home: const SplashScreen(),
+
       routes: {
+        '/welcome': (context) => const WelcomeScreen(),
         '/language': (context) => const LanguageScreen(),
         '/register': (context) => const RegistrationScreen(),
         '/otp': (context) => const OtpScreen(),
         '/roleSelection': (context) => const RoleSelectionScreen(),
+
+        // Farmer
         '/farmerForm1': (context) => const FarmerFormScreen1(),
         '/farmerForm2': (context) => const FarmerFormScreen(),
         '/paymentForm': (context) => const FarmerPaymentFormScreen(),
-        '/labourForm': (context) => const LabourFormScreen(),
-        '/driverForm': (context) => const DriverFormScreen(),
         '/fdashboard': (context) => const DashboardScreen(),
+
+        // Farmer Features
         '/market': (context) => const MarketScreen(),
         '/stores': (context) => const StoresScreen(),
         '/labors': (context) => const LaborsScreen(),
         '/drivers': (context) => const DriversScreen(),
-        '/ddashboard': (context) => const DriverDashboard(),
-        '/ldashboard': (context) => const LabourDashboard(),
-
-        // Pass products list to cultivation
         '/cultivation': (context) =>
             CultivationScreen(products: myProductsList),
-
         '/weather': (context) => const WeatherScreen(),
         '/products': (context) => const ProductsScreen(),
         '/myProducts': (context) => const MyProductsScreen(),
@@ -109,6 +106,14 @@ class MyApp extends StatelessWidget {
         '/promotions': (context) => const PromotionsScreen(),
         '/learn': (context) => const LearnScreen(),
         '/contact': (context) => const ContactScreen(),
+
+        // Driver
+        '/driverForm': (context) => const DriverFormScreen(),
+        '/ddashboard': (context) => const DriverDashboard(),
+
+        // Labour
+        '/labourForm': (context) => const LabourFormScreen(),
+        '/ldashboard': (context) => const LabourDashboard(),
       },
     );
   }

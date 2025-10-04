@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // ✅ Added
 
 class FarmerFormScreen extends StatefulWidget {
   const FarmerFormScreen({super.key});
@@ -17,9 +18,18 @@ class _FarmerFormScreen2State extends State<FarmerFormScreen> {
   String? _selectedPaddyType;
   final List<String> _paddyTypes = ["Samba", "Nadu", "Red Rice", "Other"];
 
-  void _onNext() {
+  /// ✅ Save registration
+  Future<void> _onNext() async {
     if (_formKey.currentState?.validate() ?? false) {
-      Navigator.pushNamed(context, '/paymentForm');
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool("isRegistered", true);
+      await prefs.setString("role", "farmer"); // ✅ save role
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Farmer registered successfully!")),
+      );
+
+      Navigator.pushReplacementNamed(context, '/fdashboard');
     }
   }
 
@@ -186,7 +196,7 @@ class _FarmerFormScreen2State extends State<FarmerFormScreen> {
               ],
             ),
 
-            // Bottom container with rounded top corners
+            // Bottom container
             Expanded(
               child: Container(
                 width: double.infinity,
@@ -239,7 +249,12 @@ class _FarmerFormScreen2State extends State<FarmerFormScreen> {
                             child: ElevatedButton(
                               onPressed: _onNext,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF1DD1A1),
+                                backgroundColor: const Color.fromARGB(
+                                  255,
+                                  4,
+                                  96,
+                                  71,
+                                ),
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 14,
                                 ),
@@ -248,7 +263,7 @@ class _FarmerFormScreen2State extends State<FarmerFormScreen> {
                                 ),
                               ),
                               child: const Text(
-                                "Next",
+                                "Save & REGISTER",
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,

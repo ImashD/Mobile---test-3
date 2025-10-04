@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DriverFormScreen extends StatefulWidget {
   const DriverFormScreen({super.key});
@@ -44,7 +45,8 @@ class _DriverFormScreenState extends State<DriverFormScreen> {
     }
   }
 
-  void _onSubmit() {
+  /// ✅ Save registration data and navigate to dashboard
+  Future<void> _onSubmit() async {
     if (_formKey.currentState?.validate() ?? false) {
       if (_licenseImageFile == null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -53,11 +55,16 @@ class _DriverFormScreenState extends State<DriverFormScreen> {
         return;
       }
 
+      // Save registration info locally
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool("isRegistered", true);
+      await prefs.setString("role", "driver"); // ✅ store role
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Driver registered successfully!")),
       );
 
-      // Replace form with dashboard
+      // Navigate to Driver Dashboard
       Navigator.pushReplacementNamed(context, "/ddashboard");
     }
   }

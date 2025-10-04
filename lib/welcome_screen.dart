@@ -6,85 +6,114 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE1FCF9),
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const SizedBox(height: 20),
-
-            // Main Image
-            Image.asset('assets/farmer.png', height: 250),
-
-            // Title & Subtitle
-            Column(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFE1FCF9), Color(0xFFB2F7EF)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Text(
-                      "Welcome to ",
+                const SizedBox(),
+
+                // Hero Image
+                Image.asset('assets/farmer.png', height: 250),
+
+                // Welcome Text & Feature Highlights
+                Column(
+                  children: [
+                    const Text(
+                      "Welcome!",
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24,
-                        color: Colors.black,
-                        fontFamily: 'HyperDeluxe',
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black87,
                       ),
                     ),
-                    Text(
-                      "Wee Saviya !",
+                    const SizedBox(height: 8),
+                    const Text(
+                      "Empowering farmers across Sri Lanka.\nManage your paddy lifecycle efficiently.",
+                      textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24,
-                        color: Color(0xFF1DD1A1),
-                        fontFamily: 'HyperDeluxe',
+                        fontSize: 17,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black54,
+                        height: 1.5,
                       ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Feature Highlights
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _featureIconText(Icons.inventory, "Track Inventory"),
+                        _featureIconText(
+                          Icons.local_shipping,
+                          "Request Services",
+                        ),
+                        _featureIconText(Icons.attach_money, "Get Paid Faster"),
+                      ],
                     ),
                   ],
                 ),
-                SizedBox(height: 8),
-                Text(
-                  "\n\"From Field to Market, \n Your Agri-Mart Solution!\"",
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.black54,
-                    fontFamily: 'HyperDeluxe',
-                    fontWeight: FontWeight.bold,
+
+                // Get Started Button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () => Navigator.pushNamed(context, '/language'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1DD1A1),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 6,
+                    ),
+                    icon: const Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.white,
+                    ),
+                    label: const Text(
+                      "Get Started",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
-                  textAlign: TextAlign.center,
                 ),
               ],
             ),
-
-            // Button
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pushNamed(context, '/language'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1DD1A1),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text(
-                    "Get Started",
-                    style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontFamily: 'HyperDeluxe',
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
+    );
+  }
+
+  // Feature widget
+  Widget _featureIconText(IconData icon, String text) {
+    return Column(
+      children: [
+        Icon(icon, size: 32, color: const Color(0xFF1DD1A1)),
+        const SizedBox(height: 6),
+        Text(
+          text,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Colors.black87,
+          ),
+        ),
+      ],
     );
   }
 }

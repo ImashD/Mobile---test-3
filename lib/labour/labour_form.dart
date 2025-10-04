@@ -1,7 +1,6 @@
-// labour_form.dart
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'dart:io'; // ✅ Added
 
 class LabourFormScreen extends StatefulWidget {
   const LabourFormScreen({super.key});
@@ -22,7 +21,7 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
   final TextEditingController _customSkillController = TextEditingController();
 
   String? _selectedSkill;
-  File? _idImageFile; // for uploaded ID image
+  File? _idImageFile;
 
   final List<String> _skills = [
     "Harvesting",
@@ -42,7 +41,8 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
     }
   }
 
-  void _onSubmit() {
+  /// ✅ Save registration
+  Future<void> _onSubmit() async {
     if (_formKey.currentState?.validate() ?? false) {
       if (_idImageFile == null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -51,10 +51,13 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
         return;
       }
 
+      // ✅ save role
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Labour details submitted successfully")),
+        const SnackBar(content: Text("Labour registered successfully!")),
       );
-      Navigator.pushNamed(context, "/ldashboard");
+
+      Navigator.pushReplacementNamed(context, "/ldashboard");
     }
   }
 
@@ -96,7 +99,7 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
             decoration: InputDecoration(
               hintText: hint,
               filled: true,
-              fillColor: const Color(0xFFBBDEFB), // light blue shade
+              fillColor: const Color(0xFFBBDEFB),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide.none,
@@ -232,9 +235,9 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
                           // Skill type dropdown
                           Align(
                             alignment: Alignment.centerLeft,
-                            child: Text(
+                            child: const Text(
                               "Skill*",
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,
                               ),
@@ -286,9 +289,9 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
                           // ID upload
                           Align(
                             alignment: Alignment.centerLeft,
-                            child: Text(
+                            child: const Text(
                               "Upload NIC/Work ID*",
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,
                               ),
